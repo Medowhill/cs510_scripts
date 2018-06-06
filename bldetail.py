@@ -1,7 +1,6 @@
 import sys
 
 THR = 0.7
-FTR = 0.2
 
 def getTotal(dr, keys):
     total = 0
@@ -102,37 +101,25 @@ def __main__():
     keys = ["on", "right", "stop", "yes"]
     nkeys = ["dog", "one"]
 
-    total_w = getTotal(dr, keys)
-    total_n = getTotal(dr, nkeys)
-    
-    tph, tpl = target(dr, keys, wordanalyze)
-    tnh, tnl = target(dr, nkeys, nonwordanalyze)
-    target_tp = tph * (1 - FTR) + tpl * FTR
-    target_tn = tnh * (1 - FTR) + tnl * FTR
+    total = getTotal(dr, nkeys)
 
-    best = (-1, -1, 0, 0, total_n)
-    for th1 in range(0, 101, 1):
-        for th2 in range(th1, 101, 1):
-            tp = 0
-            tn = 0
-            bu = 0
-            for key in keys:
-                bu_, tp_ = blwordanalyze(dr, key, th1 / 100.0, th2 / 100.0)
-                tp += tp_
-            for key in nkeys:
-                bu_, tn_ = blnonwordanalyze(dr, key, th1 / 100.0, th2 / 100.0)
-                bu += bu_
-                tn += tn_
-            if target_tp <= tp and target_tn <= tn and bu < best[4]:
-                best = (th1, th2, tp, tn, bu)
-    th1, th2, tp, tn, bu = best
+    print("", end=",")
+    for th2 in range(0, 101, 5):
+        print(th2, end=",")
+    print()
 
-    print(total_w, total_n)
-    print("%.3f %.3f" % (tpl / total_w, tnl / total_n))
-    print("%.3f %.3f" % (tph / total_w, tnh / total_n))
-    print("%.3f %.3f" % (target_tp / total_w, target_tn / total_n))
-    print(th1, th2)
-    print(tp, tn, bu)
-    print("%.3f %.3f %.3f" % (tp / total_w, tn / total_n, bu / total_n))
+    for th1 in range(0, 101, 5):
+        print(th1, end=",")
+        for th2 in range(0, 101, 5):
+            if th2 < th1:
+                print("", end=",")
+            else:
+                bu = 0
+                for key in nkeys:
+                    bu_, tn_ = blnonwordanalyze(dr, key, th1 / 100.0, th2 / 100.0)
+                    bu += bu_
+                print("%.3f" % (bu / total), end=",")
+        print()
+
 
 __main__()
